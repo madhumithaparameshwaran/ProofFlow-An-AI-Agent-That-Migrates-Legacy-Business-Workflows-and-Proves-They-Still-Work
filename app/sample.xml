@@ -1,0 +1,27 @@
+<Workflow name="LeaveApproval">
+  <Action id="s1" type="SetVariable" name="status" value="Pending"/>
+  <Action id="s2" type="RequestApproval" assignee="Manager" timeoutDays="3" outcomeVar="decision"/>
+  <Action id="s3" type="Condition" var="decision" op="equals" value="Approved">
+    <Then>
+      <Action id="s4" type="SetVariable" name="status" value="Approved"/>
+      <Action id="s5" type="SendEmail" to="HR" subject="Leave approved"/>
+    </Then>
+    <Else>
+      <Action id="s6" type="Condition" var="decision" op="equals" value="Rejected">
+        <Then>
+          <Action id="s7" type="SetVariable" name="status" value="Rejected"/>
+          <Action id="s8" type="SendEmail" to="Employee" subject="Leave rejected"/>
+        </Then>
+        <Else>
+          <Action id="s10" type="SetVariable" name="status" value="Escalated"/>
+          <Action id="s11" type="SendEmail" to="SeniorManager" subject="No reply, escalated"/>
+        </Else>
+      </Action>
+    </Else>
+  </Action>
+  <Action id="s12" type="Condition" var="days" op="greater" value="5">
+    <Then><Action id="s13" type="SendEmail" to="Director" subject="Long leave"/></Then>
+  </Action>
+  <Action id="s14" type="Custom" name="NX_LogAudit"/>
+  <Action id="s15" type="Custom" name="NX_RunVBScript"/>
+</Workflow>

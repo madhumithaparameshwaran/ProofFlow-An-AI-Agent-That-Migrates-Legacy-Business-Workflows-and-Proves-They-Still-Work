@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ProofFlow</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f3f5f7;--card:#fff;--tx:#14202b;--mu:#5d6b78;--bd:#d6dde3;--ac:#0b6e8a;--ok:#13795b;--bad:#b42318;--warn:#9a5b00;--code:#eef2f5;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f161c;--card:#172029;--tx:#e6edf2;--mu:#93a3b1;--bd:#2b3945;--ac:#5cc4e0;--ok:#4cd0a2;--bad:#ff8a7d;--warn:#e8b04e;--code:#0f161c;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f161c;--card:#172029;--tx:#e6edf2;--mu:#93a3b1;--bd:#2b3945;--ac:#5cc4e0;--ok:#4cd0a2;--bad:#ff8a7d;--warn:#e8b04e;--code:#0f161c;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:1120px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:26px;margin:0 0 2px;letter-spacing:-.01em}
+h2{font-size:15px;margin:0 0 8px}
+.mu{color:var(--mu)}
+.note{border-left:3px solid var(--warn);padding:6px 10px;margin:12px 0;color:var(--mu);font-size:13px}
+.bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:14px 0}
+button,.btn{font:inherit;font-weight:600;background:var(--ac);color:#fff;border:0;border-radius:6px;padding:8px 16px;cursor:pointer;text-decoration:none;display:inline-block}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) button,:root:not([data-theme="light"]) .btn{color:#06222b}}
+button.alt,.btn.alt{background:transparent;color:var(--ac);border:1px solid var(--ac)}
+button:disabled,.btn.off{opacity:.45;pointer-events:none}
+button:focus-visible,textarea:focus-visible,input:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:12px 14px;margin-bottom:12px;min-width:0}
+textarea,pre{width:100%;height:320px;margin:0;padding:8px;border:1px solid var(--bd);border-radius:6px;background:var(--code);color:var(--tx);font:12px/1.45 ui-monospace,Menlo,Consolas,monospace;box-sizing:border-box;overflow:auto;resize:vertical}
+pre{white-space:pre}
+#log{max-height:230px;overflow:auto}
+.ln{padding:3px 0;border-bottom:1px solid var(--bd)}
+.ln b{display:inline-block;min-width:118px;color:var(--ac)}
+.ln.bad span{color:var(--bad)}.ln.ok span{color:var(--ok)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.chip{border:1px solid var(--bd);border-radius:999px;padding:3px 12px;font-weight:600}
+.chip.bad,.st.fail{color:var(--bad);border-color:var(--bad)}.chip.ok,.st.pass{color:var(--ok);border-color:var(--ok)}
+.st{border:1px solid var(--bd);border-radius:999px;padding:1px 9px;font-weight:700;font-size:12px;text-transform:uppercase}
+.st.pending{color:var(--warn);border-color:var(--warn)}.st.skipped{color:var(--mu)}
+.track{height:8px;background:var(--code);border-radius:4px;margin-top:8px;overflow:hidden}
+.fill{height:100%;background:var(--ok);width:0;transition:width .5s}
+.scroll{overflow:auto;max-height:340px}
+table{border-collapse:collapse;width:100%;font-size:12.5px;min-width:640px}
+th,td{text-align:left;padding:4px 8px;border-bottom:1px solid var(--bd);vertical-align:top}
+.nw td,.nw th{white-space:nowrap}
+tr.f td{background:color-mix(in srgb,var(--bad) 12%,transparent)}
+td.p{color:var(--ok);font-weight:700}td.x{color:var(--bad);font-weight:700}
+ul{margin:4px 0 10px;padding-left:20px}
+code{background:var(--code);padding:1px 5px;border-radius:4px;font-size:12px}
+.dg{overflow:auto;height:320px;padding:4px;border:1px solid var(--bd);border-radius:6px;background:var(--code)}
+.col{display:flex;flex-direction:column;align-items:center}
+.arr{color:var(--mu);line-height:1.1}
+.node{border:1.5px solid var(--bd);border-radius:8px;padding:4px 9px;background:var(--card);font-size:12px;text-align:center}
+.node small{color:var(--mu);margin-left:6px}
+.node.fail{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 14%,var(--card))}
+.node.rev{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 14%,var(--card))}
+.cond{border-style:dashed}
+.br{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;text-align:left}
+.tag{font-size:11px;color:var(--mu);text-align:center}
+.legend{font-size:12px;color:var(--mu);margin-top:6px}.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 4px 0 10px;vertical-align:middle}
+</style></head><body><div class="wrap">
+<h1>ProofFlow</h1>
+<div class="mu">Convert a legacy workflow, then prove the new one behaves the same.</div>
+<div class="note">Backend mode: <b id="mode">checking…</b>. Supported actions: SetVariable, RequestApproval, SendEmail, nested Condition. Unknown actions go to the RAG + LLM mapper and are flagged for review when confidence is low. Results come from ProofFlow’s own interpreter, not the real Nintex or Power Automate engines.</div>
+<div class="bar">
+<input type="file" id="file" accept=".xml,.nwf,.wf,text/xml" aria-label="Upload legacy workflow XML">
+<button class="alt" id="sample">Load sample</button>
+<button id="run">Run ProofFlow</button>
+<label><input type="checkbox" id="bug" checked> Plant bugs in the first-pass converter</label>
+<a id="dl" class="btn alt off" href="#" download>Download run evidence (JSON)</a>
+</div>
+<div class="grid">
+<section class="card"><h2>1 · Legacy workflow (XML, editable)</h2><textarea id="xml" spellcheck="false" aria-label="Legacy XML"></textarea></section>
+<section class="card"><h2>2 · Workflow diagram</h2><div class="dg" id="dg"><span class="mu">The parsed workflow appears here after a run.</span></div>
+<div class="legend"><i style="background:var(--bad)"></i>step that failed verification<i style="background:var(--warn)"></i>needs manual review</div></section>
+</div>
+<div class="grid">
+<section class="card"><h2>3 · Converted workflow (JSON)</h2><pre id="json">Run ProofFlow to see the conversion.</pre></section>
+<section class="card"><h2>4 · Agent steps</h2><div id="log" aria-live="polite"></div><div id="score"></div></section>
+</div>
+<section class="card"><h2>5 · Test scenarios (legacy vs converted)</h2><div class="scroll"><table id="tb" class="nw"></table></div></section>
+<section class="card"><h2>6 · Official demonstration checklist (input, actual result, evidence)</h2><div id="chk" class="mu">Run ProofFlow to generate the labelled run.</div></section>
+<section class="card"><h2>7 · Proof report</h2><div id="rep" class="mu">Run ProofFlow to generate the report.</div></section>
+</div>
+<script>
+const $=i=>document.getElementById(i),sl=ms=>new Promise(r=>setTimeout(r,ms));
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let fname='';
+const OPS={equals:'=',notEquals:'≠',greater:'>',greaterOrEquals:'≥',less:'<'};
+function desc(s){switch(s.type){
+ case'SetVariable':return'Set '+esc(s.name)+' = '+esc(s.value);
+ case'RequestApproval':return'Request approval from '+esc(s.assignee)+' (timeout '+esc(s.timeoutDays)+' days)';
+ case'SendEmail':return'Email '+esc(s.to);
+ default:return'Custom action: '+esc(s.name||s.type)}}
+function col(list,st){return'<div class="col">'+list.map(s=>box(s,st)).join('<div class="arr">↓</div>')+'</div>'}
+function box(s,st){const c=st[s.id]||'';
+ if(s.type==='Condition')return'<div class="node cond '+c+'">◇ IF '+esc(s.var)+' '+(OPS[s.op]||esc(s.op))+' '+esc(s.value)+'<small>'+esc(s.id)+'</small>'+
+  '<div class="br"><div><div class="tag">yes</div>'+col(s.then||[],st)+'</div><div><div class="tag">no</div>'+(s.else&&s.else.length?col(s.else,st):'<div class="tag">(continue)</div>')+'</div></div></div>';
+ return'<div class="node '+c+'">'+desc(s)+'<small>'+esc(s.id)+'</small></div>'}
+const flat=l=>(l||[]).flatMap(s=>[s,...flat(s.then),...flat(s.else)]);
+function draw(wf,sn){const st={};if(sn){sn.bad_steps.forEach(i=>st[i]='fail');flat(sn.output).filter(x=>x.type==='ManualReview').forEach(x=>st[x.sourceId]='rev')}
+ $('dg').innerHTML=col(wf,st)}
+function log(a,t,c=''){const d=document.createElement('div');d.className='ln '+c;d.innerHTML='<b>'+esc(a)+'</b><span>'+esc(t)+'</span>';$('log').appendChild(d);$('log').scrollTop=1e6}
+function table(rows){$('tb').innerHTML='<tr><th>#</th><th>Kind</th><th>Decision</th><th>Days</th><th>Legacy result</th><th>Converted result</th><th>Result</th></tr>'+
+ rows.map((r,i)=>'<tr class="'+(r.ok?'':'f')+'"><td>'+(i+1)+'</td><td>'+esc(r.kind)+'</td><td>'+(esc(r.decision)||'(empty)')+'</td><td>'+esc(r.days)+'</td><td>'+esc(r.L)+'</td><td>'+esc(r.M)+'</td><td class="'+(r.ok?'p':'x')+'">'+(r.ok?'pass':'FAIL @ '+esc(r.step||'?'))+'</td></tr>').join('')}
+function score(ch){const p=ch[ch.length-1][1];
+ $('score').innerHTML='<div class="chips">'+ch.map(c=>'<span class="chip '+(c[1]===100?'ok':'bad')+'">Round '+c[0]+': '+c[1]+'%</span>').join('<span class="mu">→</span>')+'</div><div class="track"><div class="fill" style="width:'+p+'%"></div></div>'}
+function checklist(r){$('chk').className='';
+ $('chk').innerHTML='<p><b>'+esc(r.label)+'</b> · run <code>'+esc(r.id)+'</code> · input: '+esc(r.input.filename||'pasted text')+', '+r.input.bytes+' bytes, planted bugs '+(r.input.plant_bugs?'on':'off')+'</p>'+
+ '<div class="scroll"><table><tr><th>#</th><th>Expected (official step)</th><th>Status</th><th>Actual result and evidence</th></tr>'+
+ r.checklist.map(c=>'<tr><td>'+c.n+'</td><td>'+esc(c.expected)+'</td><td><span class="st '+c.status+'">'+c.status+'</span></td><td>'+esc(c.actual)+'</td></tr>').join('')+'</table></div>'+
+ '<b>Differences from the expected result, explained</b><ul>'+r.differences.map(d=>'<li>'+esc(d)+'</li>').join('')+'</ul>'}
+function report(r){$('rep').className='';
+ $('rep').innerHTML='<p><b>Fidelity: '+r.fidelity+'%</b> ('+r.passed+' of '+r.total+' scenarios identical) after '+r.rounds+' round'+(r.rounds>1?'s':'')+'.</p>'+
+ '<b>Auto-repaired</b><ul>'+(r.fixes.length?r.fixes.map(f=>'<li>'+esc(f)+'</li>').join(''):'<li>None needed.</li>')+'</ul>'+
+ '<b>Needs a human</b><ul>'+(r.review.length?r.review.map(x=>'<li><code>'+esc(x.legacyAction)+'</code> (step '+esc(x.sourceId)+'): best match "'+esc(x.suggestion)+'", confidence '+x.confidence+' (threshold '+r.threshold+', via '+esc(x.via)+'). '+esc(x.rationale)+'</li>').join(''):'<li>Nothing flagged.</li>')+'</ul>'}
+async function init(){try{$('xml').value=await(await fetch('/api/sample')).text();$('mode').textContent=(await(await fetch('/api/status')).json()).mode}catch(e){$('mode').textContent='backend not reachable'}}
+$('sample').onclick=async()=>{$('xml').value=await(await fetch('/api/sample')).text();fname='sample.xml'};
+$('file').onchange=async e=>{const f=e.target.files[0];if(f){$('xml').value=await f.text();fname=f.name}};
+async function main(){
+ const btn=$('run');btn.disabled=true;$('dl').classList.add('off');
+ ['log','score','tb'].forEach(i=>$(i).innerHTML='');$('chk').textContent='Running…';$('rep').textContent='Running…';
+ let d;
+ try{const res=await fetch('/api/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({xml:$('xml').value,inject_bugs:$('bug').checked,filename:fname})});
+  d=await res.json();if(!res.ok)throw Error(d.detail||'Request failed')}
+ catch(e){log('Error',e.message,'bad');$('chk').textContent='Run stopped: '+e.message;$('rep').textContent='';btn.disabled=false;return}
+ const ch=[];
+ for(const ev of d.events){log(ev.agent,ev.text,ev.level);
+  if(ev.agent==='Parser Agent')draw(d.workflow,null);
+  if(ev.snap!=null){const sn=d.snapshots[ev.snap];$('json').textContent=JSON.stringify({name:d.name,actions:sn.output},null,2);table(sn.rows);draw(d.workflow,sn);ch.push([ev.round,ev.pct]);score(ch)}
+  await sl(550)}
+ checklist(d.run);report(d.report);
+ $('dl').href='/api/runs/'+d.run.id;$('dl').classList.remove('off');btn.disabled=false}
+$('run').onclick=main;init();
+</script></body></html>

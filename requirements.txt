@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+lxml
+langgraph
+chromadb
+anthropic
+mcp
+python-dotenv
+pytest
+httpx

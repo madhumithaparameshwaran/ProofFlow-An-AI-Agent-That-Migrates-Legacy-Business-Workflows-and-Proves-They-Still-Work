@@ -1,0 +1,14 @@
+[
+ {"id":"k1","target":"SharePoint: Create item (audit list)","keywords":["log","audit","history","list","record"],
+  "text":"Nintex Log to history list and audit logging actions write entries to a SharePoint list. In Power Automate use the SharePoint Create item action pointed at an audit list."},
+ {"id":"k2","target":"HTTP request","keywords":["http","call","web","request","service","rest"],
+  "text":"Nintex Call web service and Web request actions map to the Power Automate HTTP action with method, URI, headers and body."},
+ {"id":"k3","target":"Teams: Post message","keywords":["teams","chat","notify","message","post"],
+  "text":"Nintex notification to chat maps to the Microsoft Teams Post message in a chat or channel action."},
+ {"id":"k4","target":"Delay","keywords":["wait","pause","delay","sleep"],
+  "text":"Nintex Pause for and Pause until map to the Power Automate Delay and Delay until actions."},
+ {"id":"k5","target":"SharePoint: Update item","keywords":["update","item","modify","change","field"],
+  "text":"Nintex Update item sets fields on a list item. In Power Automate use the SharePoint Update item action."},
+ {"id":"k6","target":"No direct equivalent (Azure Function or Power Fx redesign)","keywords":["script","code","custom","vbscript","javascript","run"],
+  "text":"Nintex Run script and custom code actions have no direct Power Automate equivalent. They must be redesigned using an Azure Function, an HTTP call or Power Fx expressions."}
+]
